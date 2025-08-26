@@ -1,6 +1,6 @@
-JexBoss - JBoss (and others Java Deserialization Vulnerabilities) verify and EXploitation Tool
+JexBoss - JBoss (and others Java Deserialization Vulnerabilities) verify and EXploitation Tool-CN
 ==============================================================================================
-
+中文汉化版
 JexBoss is a tool for testing and exploiting vulnerabilities in JBoss Application Server and others Java Platforms, Frameworks, Applications, etc.
 
 Requirements
